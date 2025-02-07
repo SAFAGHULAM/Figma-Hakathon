@@ -1,19 +1,21 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { useState } from 'react';
+import { useState } from "react";
+import Link from "next/link";
+import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
 import {
   MagnifyingGlassIcon,
   ShoppingCartIcon,
   HeartIcon,
   Bars3Icon,
   XMarkIcon,
-} from '@heroicons/react/24/outline';
-import TopBar from './Topbar';
+} from "@heroicons/react/24/outline";
+import TopBar from "./Topbar";
 
 function Header() {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isMobilePagesOpen, setIsMobilePagesOpen] = useState(false);
 
   return (
     <>
@@ -21,11 +23,10 @@ function Header() {
       <TopBar />
 
       {/* Main Header */}
-      <div className="w-full h-[80px] flex justify-center items-center border-b-2">
+      <div className="w-full h-[80px] flex justify-center items-center border-b-2 bg-white">
         <div className="w-full max-w-[1200px] h-full flex justify-between items-center px-6">
           {/* Left Section: Logo and Search */}
           <div className="flex items-center gap-6">
-            {/* Logo */}
             <h1 className="text-3xl font-bold text-[#0D0E43]">Hekto</h1>
 
             {/* Search Bar */}
@@ -85,8 +86,8 @@ function Header() {
               )}
             </li>
             <li>
-              <Link className="hover:text-[#FB2E86] transition-colors" href="/product">
-                Products
+              <Link className="hover:text-[#FB2E86] transition-colors" href="/shop">
+                Shop
               </Link>
             </li>
             <li>
@@ -95,8 +96,8 @@ function Header() {
               </Link>
             </li>
             <li>
-              <Link className="hover:text-[#FB2E86] transition-colors" href="/shop">
-                Shop
+              <Link className="hover:text-[#FB2E86] transition-colors" href="/product">
+                Products
               </Link>
             </li>
             <li>
@@ -106,29 +107,31 @@ function Header() {
             </li>
           </ul>
 
-          {/* Right Section: Icons */}
-          <div className="hidden sm:flex items-center gap-x-6">
-            <Link
-              href="/cart"
-              className="hover:text-[#FB2E86] transition-colors flex items-center gap-1"
-            >
+          {/* Right Section: Authentication & Cart */}
+          <div className="flex items-center gap-x-6">
+            <Link href="/cart" className="hover:text-[#FB2E86] transition-colors flex items-center gap-1">
               <ShoppingCartIcon className="w-5 h-5" />
               <span>Cart</span>
             </Link>
-            <Link
-              href="/wishlist"
-              className="hover:text-[#FB2E86] transition-colors flex items-center gap-1"
-            >
+            <Link href="/wishlist" className="hover:text-[#FB2E86] transition-colors flex items-center gap-1">
               <HeartIcon className="w-5 h-5" />
               <span>Wishlist</span>
             </Link>
+
+            <SignedOut>
+              <SignInButton>
+                <button className="px-4 py-2 bg-[#FB2E86] text-white rounded-md hover:bg-[#F94C9B] transition">
+                  Login
+                </button>
+              </SignInButton>
+            </SignedOut>
+            <SignedIn>
+              <UserButton />
+            </SignedIn>
           </div>
 
           {/* Mobile Menu Toggle */}
-          <button
-            className="sm:hidden flex items-center"
-            onClick={() => setIsMobileOpen(!isMobileOpen)}
-          >
+          <button className="sm:hidden flex items-center" onClick={() => setIsMobileOpen(!isMobileOpen)}>
             {isMobileOpen ? (
               <XMarkIcon className="w-6 h-6 text-black" />
             ) : (
@@ -141,7 +144,6 @@ function Header() {
       {/* Mobile Menu */}
       {isMobileOpen && (
         <div className="sm:hidden flex flex-col px-4 py-4 bg-white border-t">
-          {/* Navigation Links */}
           <ul className="text-center">
             <li>
               <Link className="block py-2 hover:text-[#FB2E86]" href="/">
@@ -149,8 +151,44 @@ function Header() {
               </Link>
             </li>
             <li>
-              <Link className="block py-2 hover:text-[#FB2E86]" href="/product">
-                Products
+              <button
+                className="block w-full text-left py-2 hover:text-[#FB2E86]"
+                onClick={() => setIsMobilePagesOpen(!isMobilePagesOpen)}
+              >
+                Pages {isMobilePagesOpen ? "▲" : "▼"}
+              </button>
+              {isMobilePagesOpen && (
+                <ul className="pl-4 text-gray-700">
+                  <li className="py-1">
+                    <Link href="/cart">Cart</Link>
+                  </li>
+                  <li className="py-1">
+                    <Link href="/checkout">Billing Details</Link>
+                  </li>
+                  <li className="py-1">
+                    <Link href="/ordercompleted">Order Completed</Link>
+                  </li>
+                  <li className="py-1">
+                    <Link href="/about-us">About Us</Link>
+                  </li>
+                  <li className="py-1">
+                    <Link href="/contact-us">Contact Us</Link>
+                  </li>
+                  <li className="py-1">
+                    <Link href="/account">My Account</Link>
+                  </li>
+                  <li className="py-1">
+                    <Link href="/creatorpage">About Creator</Link>
+                  </li>
+                  <li className="py-1">
+                    <Link href="/faq">FAQ</Link>
+                  </li>
+                </ul>
+              )}
+            </li>
+            <li>
+              <Link className="block py-2 hover:text-[#FB2E86]" href="/shop">
+                Shop
               </Link>
             </li>
             <li>
@@ -159,8 +197,8 @@ function Header() {
               </Link>
             </li>
             <li>
-              <Link className="block py-2 hover:text-[#FB2E86]" href="/shop">
-                Shop
+              <Link className="block py-2 hover:text-[#FB2E86]" href="/product">
+                Products
               </Link>
             </li>
             <li>
@@ -169,56 +207,6 @@ function Header() {
               </Link>
             </li>
           </ul>
-
-          {/* Dropdown: Pages */}
-          <div className="text-center">
-            <button
-              className="block py-2 hover:text-[#FB2E86]"
-              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-            >
-              Pages
-            </button>
-            {isDropdownOpen && (
-              <ul className="bg-gray-100 rounded-md shadow-md text-sm">
-                <li className="px-4 py-2 hover:bg-gray-200">
-                  <Link href="/cart">Cart</Link>
-                </li>
-                <li className="px-4 py-2 hover:bg-gray-200">
-                  <Link href="/checkout">Billing Details</Link>
-                </li>
-                <li className="px-4 py-2 hover:bg-gray-200">
-                  <Link href="/ordercompleted">Order Completed</Link>
-                </li>
-                <li className="px-4 py-2 hover:bg-gray-200">
-                  <Link href="/about-us">About Us</Link>
-                </li>
-                <li className="px-4 py-2 hover:bg-gray-200">
-                  <Link href="/contact-us">Contact Us</Link>
-                </li>
-                <li className="px-4 py-2 hover:bg-gray-200">
-                  <Link href="/account">My Account</Link>
-                </li>
-                <li className="px-4 py-2 hover:bg-gray-200">
-                  <Link href="/creatorpage">About Creator</Link>
-                </li>
-                <li className="px-4 py-2 hover:bg-gray-200">
-                  <Link href="/faq">FAQ</Link>
-                </li>
-              </ul>
-            )}
-          </div>
-
-          {/* Mobile Cart and Wishlist */}
-          <div className="flex justify-center gap-x-6 py-4 border-t">
-            <Link href="/cart" className="flex items-center gap-1 hover:text-[#FB2E86]">
-              <ShoppingCartIcon className="w-5 h-5" />
-              <span>Cart</span>
-            </Link>
-            <Link href="/wishlist" className="flex items-center gap-1 hover:text-[#FB2E86]">
-              <HeartIcon className="w-5 h-5" />
-              <span>Wishlist</span>
-            </Link>
-          </div>
         </div>
       )}
     </>

@@ -7,7 +7,7 @@ const slides = [
   {
     title: "New Furniture Collection Trends in 2020",
     description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Magna in est adipiscing in phasellus non in justo.",
+      "Find our new collection really Exciting and Affordable...",
     buttonText: "Shop Now",
     chairImage: "/images/chair.png", // Replace with the correct path
     lampImage: "/images/lamp.png", // Replace with the correct path
@@ -72,7 +72,7 @@ function HeroSection() {
           {current.description}
         </p>
         <Link
-          href="#"
+          href="/shop"
           className="inline-block bg-pink-500 text-white text-sm font-medium py-3 px-6 rounded-md mt-6 hover:bg-pink-600 transition-all duration-300 w-1/3 text-center"
         >
           {current.buttonText}

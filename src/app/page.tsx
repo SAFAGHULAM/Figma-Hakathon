@@ -6,6 +6,7 @@ import Latest from "./components/Latest";
 import Offer from "./components/Offer";
 import Trending from "./components/Trending"
 import TrendingProducts from "./components/TrendingProduct"
+import Voucher from "./components/Voucher"
 import DiscountItem from "./components/Discount";
 import TopCategories from "./components/Category";
 import Newsletter from "./components/Newsletter";
@@ -23,6 +24,7 @@ export default function Home() {
       <Offer/>
       <Trending/>
       <TrendingProducts/>
+      <Voucher/>
       <DiscountItem/>
       <TopCategories/>
       <Newsletter/>

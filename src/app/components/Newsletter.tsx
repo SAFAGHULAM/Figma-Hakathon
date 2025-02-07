@@ -1,5 +1,7 @@
 'use client';
 
+import Link from "next/link";
+
 function Newsletter() {
   return (
     <section
@@ -16,9 +18,9 @@ function Newsletter() {
 
         {/* Button */}
         <div className="mt-6">
-          <button className="bg-pink-600 hover:bg-pink-700 text-white text-lg px-6 py-3 rounded-full transition-all duration-300">
+          <Link href="/shop" className="bg-pink-600 hover:bg-pink-700 text-white text-lg px-6 py-3 rounded-full transition-all duration-300">
             Shop Now
-          </button>
+          </Link>
         </div>
       </div>
     </section>

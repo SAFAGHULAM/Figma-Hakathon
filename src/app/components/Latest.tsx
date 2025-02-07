@@ -1,56 +1,92 @@
-export default function Latest() {
+"use client";
+
+import Image from 'next/image';
+import React, { useState, useEffect } from "react";
+import { Product } from "../../../types/products";
+import { client } from "@/sanity/lib/client";
+import { six } from "@/sanity/lib/queries";
+import { urlFor } from '@/sanity/lib/image';
+
+const Latest = () => {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
+  const [activeCategory, setActiveCategory] = useState<string>('all');  
+  useEffect(() => {
+    async function fetchProducts() {
+      const fetchedProducts = await client.fetch(six);
+      setProducts(fetchedProducts);
+      setFilteredProducts(fetchedProducts);  // Initially show all products
+    }
+    fetchProducts();
+  }, []);
+
+  const handleCategoryChange = (category: string) => {
+    setActiveCategory(category); // Set the active category
+
+    // Just show all products, regardless of the category selected
+    setFilteredProducts(products);
+  };
+
   return (
-    <div
-      className="container mx-auto px-4 py-8"
-      style={{ backgroundColor: "white" }}
-    >
+    <div className="container mx-auto px-4 py-8" style={{ backgroundColor: "white" }}>
       <h1 className="text-3xl font-bold text-center mb-8 text-[#151875]">
         Latest Products
       </h1>
 
-      {/* Static Navigation */}
+      {/* Navigation Links */}
       <div className="flex justify-center space-x-8 text-[#151875]">
-        <a href="#" className="text-[#FB4997] font-semibold">
+        <a
+          href="#"
+          onClick={() => handleCategoryChange("newarrival")}
+          className={`font-semibold ${activeCategory === "newarrival" ? "text-[#FB4997]" : ""}`}
+        >
           New Arrival
         </a>
-        <a href="#" className="hover:text-[#FB4997]">Best Seller</a>
-        <a href="#" className="hover:text-[#FB4997]">Featured</a>
-        <a href="#" className="hover:text-[#FB4997]">Special Offer</a>
+        <a
+          href="#"
+          onClick={() => handleCategoryChange("bestseller")}
+          className={`hover:text-[#FB4997] ${activeCategory === "bestseller" ? "text-[#FB4997]" : ""}`}
+        >
+          Best Seller
+        </a>
+        <a
+          href="#"
+          onClick={() => handleCategoryChange("featured")}
+          className={`hover:text-[#FB4997] ${activeCategory === "featured" ? "text-[#FB4997]" : ""}`}
+        >
+          Featured
+        </a>
+        <a
+          href="#"
+          onClick={() => handleCategoryChange("specialoffer")}
+          className={`hover:text-[#FB4997] ${activeCategory === "specialoffer" ? "text-[#FB4997]" : ""}`}
+        >
+          Special Offer
+        </a>
       </div>
 
       {/* Grid for Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-8">
-        {/* Array of cards for DRY principle */}
-        {[
-          { image: "/images/latest1.png", price: "$42.00", original: "$65.00" },
-          { image: "/images/latest3.0.png", price: "$42.00", original: "$65.00" },
-          { image: "/images/latest3.png", price: "$77.00", original: "$65.00" },
-          { image: "/images/latest4.png", price: "$42.00", original: "$65.00" },
-          { image: "/images/product4.png", price: "$42.00", original: "$65.00" },
-          { image: "/images/latest6.png", price: "$42.00", original: "$65.00" },
-        ].map((product, index) => (
+        {filteredProducts.map((product, index) => (
           <div
             key={index}
             className="border rounded-lg shadow-md p-4 bg-[#f7f7f7]"
           >
             <div className="w-full h-66 flex items-center justify-center">
-              <img
-                src={product.image}
-                alt="Comfort Handy Craft"
-                className="w-full h-full object-cover rounded-t-lg"
+              {product.image && (
+              <Image
+              src={urlFor(product.image).url()}
+              alt={product.name}
+              className="w-full h-full object-cover rounded-t-lg"
+              width={200} // Adjust as needed
+              height={200} // Adjust as needed
               />
+            )}
             </div>
             <div className="bg-white p-4 rounded-b-lg text-center">
-              <h2 className="text-lg font-semibold mb-2">
-                Comfort Handy Craft
-              </h2>
+              <h2 className="text-lg font-semibold mb-2">{product.name}</h2>
               <div className="flex items-center justify-center">
-                <span className="text-pink-500 font-bold mr-2">
-                  {product.price}
-                </span>
-                <span className="text-gray-400 line-through">
-                  {product.original}
-                </span>
+                <span className="text-pink-500 font-bold mr-2">${product.price}</span>
               </div>
             </div>
           </div>
@@ -58,4 +94,7 @@ export default function Latest() {
       </div>
     </div>
   );
-}
+};
+
+export default Latest;
+

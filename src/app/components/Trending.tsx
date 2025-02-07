@@ -1,7 +1,25 @@
-// components/TrendingProduct.js
+"use client";
+
 import Image from 'next/image';
+import React, { useState, useEffect } from "react";
+import { Product } from "../../../types/products";
+import { client } from "@/sanity/lib/client";
+import { trending } from "@/sanity/lib/queries";
+import { urlFor } from '@/sanity/lib/image';
 
 const Trending = () => {
+  const [products, setProducts] = useState<Product[]>([]);
+
+  useEffect(() => {
+    async function fetchProducts() {
+      const fetchedProducts: Product[] = await client.fetch(trending);
+      setProducts(fetchedProducts);
+    }
+    fetchProducts();
+  }, []);
+
+  const featuredProduct = products[0]; 
+
   return (
     <section className="py-16 bg-purple-50">
       <div className="container mx-auto px-4 flex flex-col md:flex-row items-center gap-4">
@@ -17,15 +35,16 @@ const Trending = () => {
             />
           </div>
 
-
           {/* Sofa Image */}
-          <Image
-            src="/images/sofa.png" // Replace with your actual image path
-            alt="Sofa"
-            width={400}
-            height={400}
-            className="relative z-10 object-contain"
-          />
+          {featuredProduct?.image && (
+            <Image
+              src={urlFor(featuredProduct.image).url()}
+              alt={featuredProduct.name || "Product Image"}
+              width={400}
+              height={400}
+              className="relative z-10 object-contain"
+            />
+          )}
         </div>
 
         {/* Product Details */}
@@ -44,7 +63,7 @@ const Trending = () => {
             </li>
             <li className="flex items-center text-[#ACABC3] gap-2">
               <span className="w-3 h-3 bg-green-500 rounded-full"></span>
-              Arms, backs and seats are structurally reinforced
+              Arms, backs, and seats are structurally reinforced
             </li>
           </ul>
 
@@ -54,8 +73,10 @@ const Trending = () => {
               Add To Cart
             </button>
             <div>
-              <p className="text-gray-500 text-sm">B&B Italian Sofa</p>
-              <p className="text-blue-800 font-bold text-lg">$32.00</p>
+              <p className="text-gray-500 text-sm">{featuredProduct?.name || "B&B Italian Sofa"}</p>
+              <p className="text-blue-800 font-bold text-lg">
+                ${featuredProduct?.price || "32.00"}
+              </p>
             </div>
           </div>
         </div>
